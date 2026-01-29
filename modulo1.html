@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#7c3aed">
+    <title>Módulo 1: Ética na Saúde Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        
+        /* Botões Flutuantes */
+        .floating-btn {
+            position: fixed; left: 10px; z-index: 1000; width: 50px; height: 50px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px; border: 2px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
+        }
+        @media (min-width: 768px) { .floating-btn { left: 20px; width: 60px; height: 60px; font-size: 24px; } }
+        
+        .tooltip { display: none; position: absolute; left: 60px; background: rgba(0,0,0,0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; white-space: nowrap; }
+        .floating-btn:hover .tooltip { display: block; }
+
+        /* Cards e Passos */
+        .step-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; }
+        .step-card:active { transform: scale(0.98); }
+        
+        .step-number { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 16px; color: white; }
+        .step-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        .step-content.show { display: block; animation: slideDown 0.3s ease-out; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Chatbot */
+        .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+        .chat-button { width: 60px; height: 60px; border-radius: 50%; background: #7c3aed; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .chat-button:hover { transform: scale(1.1); }
+        .chat-panel { position: absolute; bottom: 80px; right: 0; width: 300px; background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: none; overflow: hidden; border: 1px solid #e5e7eb; }
+        .chat-panel.show { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-24">
+
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-6 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">⚖️</span>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">Módulo 1: Ética na Saúde</h1>
+                    <p class="text-xs text-purple-100">Guia Prático Interativo</p>
+                </div>
+            </div>
+            <div class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                <span id="timer" class="font-mono font-bold">50:00</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-white shadow-sm sticky top-[76px] z-30">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>Progresso</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div id="progress-bar" class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-6 max-w-2xl">
+        
+        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6 rounded-r-lg shadow-sm">
+            <h2 class="text-purple-800 font-bold mb-1 flex items-center gap-2">
+                <span class="text-xl">🎯</span> Objetivo da Aula
+            </h2>
+            <p class="text-purple-700 text-sm">Compreender os princípios éticos no uso de IA para saúde e como evitar riscos de alucinação e viés.</p>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step1')">
+            <div class="flex items-center">
+                <div class="step-number bg-indigo-500 shadow-md group-hover:scale-110 transition-transform">1</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Princípios da Bioética</h3>
+                    <p class="text-xs text-gray-500">Beneficência e Não-maleficência</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step1" class="step-content">
+                <div class="space-y-3 text-sm text-gray-600 mb-4">
+                    <p>Ao usar IA na saúde, devemos garantir:</p>
+                    <ul class="space-y-2 ml-2">
+                        <li class="flex gap-2">✅ <strong>Beneficência:</strong> A tecnologia deve agir para o bem do paciente.</li>
+                        <li class="flex gap-2">🛡️ <strong>Não-maleficência:</strong> "Primeiro, não prejudicar". A IA não pode induzir a erros.</li>
+                        <li class="flex gap-2">⚖️ <strong>Justiça:</strong> O acesso e os dados devem ser justos e sem preconceitos.</li>
+                    </ul>
+                </div>
+                <button onclick="completeStep(this, event)" class="w-full bg-indigo-50 text-indigo-600 py-3 rounded-lg font-bold hover:bg-indigo-100 transition-colors border border-indigo-200">
+                    Concluir Passo 1
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step2')">
+            <div class="flex items-center">
+                <div class="step-number bg-purple-500 shadow-md group-hover:scale-110 transition-transform">2</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Alucinações da IA</h3>
+                    <p class="text-xs text-gray-500">Quando a IA inventa fatos</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step2" class="step-content">
+                <div class="bg-red-50 p-3 rounded-lg border border-red-100 mb-3 text-sm text-red-700">
+                    ⚠️ <strong>Alerta:</strong> IAs generativas (como ChatGPT) podem inventar referências médicas que parecem reais, mas não existem.
+                </div>
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-2">🔍 <strong>Verificação Obrigatória:</strong> Nunca publique sem checar na fonte original (PubMed, SciELO).</li>
+                    <li class="flex gap-2">🚫 <strong>Diagnóstico:</strong> Jamais use IA para diagnóstico final sem revisão humana.</li>
+                </ul>
+                <button onclick="completeStep(this, event)" class="w-full bg-purple-50 text-purple-600 py-3 rounded-lg font-bold hover:bg-purple-100 transition-colors border border-purple-200">
+                    Concluir Passo 2
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step3')">
+            <div class="flex items-center">
+                <div class="step-number bg-pink-500 shadow-md group-hover:scale-110 transition-transform">3</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Privacidade e Dados</h3>
+                    <p class="text-xs text-gray-500">Protegendo o paciente (LGPD)</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step3" class="step-content">
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-2">🔒 <strong>Dados Sensíveis:</strong> Nunca insira nomes reais de pacientes em IAs públicas.</li>
+                    <li class="flex gap-2">🆔 <strong>Anonimização:</strong> Remova qualquer dado que possa identificar a pessoa (CPF, endereço, datas específicas).</li>
+                    <li class="flex gap-2">📜 <strong>LGPD:</strong> A Lei Geral de Proteção de Dados se aplica rigorosamente na saúde.</li>
+                </ul>
+                <button onclick="completeStep(this, event)" class="w-full bg-pink-50 text-pink-600 py-3 rounded-lg font-bold hover:bg-pink-100 transition-colors border border-pink-200">
+                    Concluir Passo 3
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step4')">
+            <div class="flex items-center">
+                <div class="step-number bg-teal-500 shadow-md group-hover:scale-110 transition-transform">4</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Responsabilidade Profissional</h3>
+                    <p class="text-xs text-gray-500">O humano no comando</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step4" class="step-content">
+                <div class="space-y-3 text-sm text-gray-600 mb-4">
+                    <p>A IA é uma ferramenta de <strong>apoio</strong>, não de substituição.</p>
+                    <ul class="space-y-2 ml-2">
+                        <li class="flex gap-2">👩‍⚕️ <strong>Responsabilidade Final:</strong> O profissional de saúde é sempre responsável pela informação divulgada.</li>
+                        <li class="flex gap-2">📢 <strong>Transparência:</strong> É ético informar quando um conteúdo foi gerado com auxílio de IA.</li>
+                    </ul>
+                </div>
+                <div class="bg-teal-100 p-4 rounded-lg mt-3 text-sm text-teal-800 text-center font-bold border border-teal-200">
+                    🎉 Parabéns! Você dominou os conceitos de Ética Digital!
+                </div>
+                <button onclick="completeStep(this, event)" class="mt-4 w-full bg-teal-600 text-white py-3 rounded-lg font-bold hover:bg-teal-700 transition-colors shadow-lg">
+                    Finalizar Módulo
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="floating-btn" style="top: 100px; background: #7c3aed;" onclick="openModal('glossaryModal')">
+        📚<div class="tooltip">Glossário</div>
+    </div>
+
+    <div class="chat-widget">
+        <div class="chat-button animate-bounce" onclick="toggleChat()">
+            <span class="text-2xl">🤖</span>
+        </div>
+        <div id="chatPanel" class="chat-panel">
+            <div class="bg-purple-600 text-white p-3 font-bold flex justify-between items-center">
+                <span class="flex items-center gap-2"><span class="text-xl">🤖</span> NeuroBot</span>
+                <span onclick="toggleChat()" class="cursor-pointer p-1 hover:bg-white/20 rounded">✕</span>
+            </div>
+            <div id="chatMessages" class="p-4 h-64 overflow-y-auto bg-gray-50 space-y-3 text-sm">
+                <div class="bg-white p-3 rounded-lg shadow-sm max-w-[90%] border border-gray-100">
+                    Olá! Tem alguma dúvida sobre ética no uso de IA?
+                </div>
+            </div>
+            <div class="p-3 border-t bg-white flex gap-2">
+                <input type="text" id="chatInput" placeholder="Sua dúvida..." class="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:border-purple-500" onkeypress="handleEnter(event)">
+                <button onclick="sendMessage()" class="bg-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="glossaryModal" class="modal" onclick="if(event.target === this) closeModal('glossaryModal')">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4 text-purple-800">Glossário de Ética</h3>
+            <div class="space-y-3 text-sm text-gray-700">
+                <p><strong>Alucinação:</strong> Quando a IA gera informações falsas com confiança.</p>
+                <p><strong>Viés (Bias):</strong> Tendências preconceituosas nos dados da IA.</p>
+                <p><strong>LGPD:</strong> Lei Geral de Proteção de Dados.</p>
+                <p><strong>Black Box:</strong> A falta de transparência sobre como a IA toma decisões.</p>
+            </div>
+            <button onclick="closeModal('glossaryModal')" class="mt-6 w-full bg-gray-200 py-2 rounded-lg font-bold text-gray-700 hover:bg-gray-300">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer
+        let timeLeft = 50 * 60;
+        setInterval(() => {
+            if(timeLeft > 0) {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                let s = (timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }
+        }, 1000);
+
+        // UI Functions
+        function toggleStep(id) {
+            const content = document.getElementById(id);
+            const isVisible = content.classList.contains('show');
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('show'));
+            if (!isVisible) {
+                content.classList.add('show');
+                setTimeout(() => content.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }
+        }
+
+        let stepsDone = 0;
+        function completeStep(btn, event) {
+            event.stopPropagation();
+            if (btn.innerText.includes("Concluído")) return;
+
+            btn.innerText = "Concluído ✅";
+            btn.classList.remove('bg-indigo-50', 'text-indigo-600', 'bg-purple-50', 'text-purple-600', 'bg-pink-50', 'text-pink-600');
+            btn.classList.add('bg-green-100', 'text-green-700', 'cursor-default');
+            
+            const number = btn.parentElement.parentElement.querySelector('.step-number');
+            number.innerHTML = "✓";
+            number.classList.add('bg-green-500');
+            
+            stepsDone++;
+            let pct = (stepsDone / 4) * 100;
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-text').innerText = `${Math.round(pct)}%`;
+
+            let currentId = btn.parentElement.id;
+            let nextNum = parseInt(currentId.replace('step', '')) + 1;
+            if (nextNum <= 4) setTimeout(() => toggleStep('step' + nextNum), 500);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+        // Chat
+        function toggleChat() { document.getElementById('chatPanel').classList.toggle('show'); }
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+
+        function sendMessage() {
+            let input = document.getElementById('chatInput');
+            let msg = input.value.trim();
+            if(!msg) return;
+
+            addMsg(msg, true);
+            input.value = '';
+
+            setTimeout(() => {
+                let response = "Essa é uma excelente questão ética. Na dúvida, priorize sempre a segurança e privacidade do paciente.";
+                if(msg.toLowerCase().includes('lei') || msg.toLowerCase().includes('lgpd')) response = "A LGPD exige consentimento explícito para uso de dados de saúde. Nunca use dados reais em IAs públicas.";
+                if(msg.toLowerCase().includes('erro')) response = "Se a IA errar, a responsabilidade é do profissional que a utilizou sem revisar.";
+                addMsg(response, false);
+            }, 800);
+        }
+
+        function addMsg(text, isUser) {
+            let div = document.createElement('div');
+            div.className = isUser ? "bg-purple-100 p-2 rounded-lg self-end ml-8 text-purple-900" : "bg-white p-2 rounded-lg shadow-sm mr-8 border text-gray-700";
+            div.innerText = text;
+            let container = document.getElementById('chatMessages');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>
