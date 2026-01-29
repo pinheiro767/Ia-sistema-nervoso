@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#667eea">
+    <title>Design Visual com IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        
+        .floating-btn {
+            position: fixed; left: 10px; z-index: 1000; width: 50px; height: 50px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px; border: 2px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
+        }
+        @media (min-width: 768px) { .floating-btn { left: 20px; width: 60px; height: 60px; font-size: 24px; } }
+        
+        .step-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; }
+        .step-card:active { transform: scale(0.98); }
+        
+        .step-number { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 16px; color: white; }
+        .step-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
+        .step-content.show { display: block; animation: slideDown 0.3s ease-out; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+        .chat-button { width: 60px; height: 60px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .chat-button:hover { transform: scale(1.1); }
+        .chat-panel { position: absolute; bottom: 80px; right: 0; width: 300px; background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: none; overflow: hidden; border: 1px solid #e5e7eb; }
+        .chat-panel.show { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 2000; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 16px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 20px; }
+        
+        .tooltip { display: none; position: absolute; left: 60px; background: rgba(0,0,0,0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; white-space: nowrap; }
+        .floating-btn:hover .tooltip { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-24">
+
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-6 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🎨</span>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">Módulo 2: Design Visual</h1>
+                    <p class="text-xs text-blue-100">Guia Prático Interativo</p>
+                </div>
+            </div>
+            <div class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                <span id="timer" class="font-mono font-bold">50:00</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-white shadow-sm sticky top-[76px] z-30">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>Progresso da Atividade</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-6 max-w-2xl">
+        
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg shadow-sm">
+            <h2 class="text-blue-800 font-bold mb-1 flex items-center gap-2">
+                <span class="text-xl">🎯</span> Objetivo da Aula
+            </h2>
+            <p class="text-blue-700 text-sm">Crie um card educativo sobre o Sistema Nervoso utilizando o Canva. Siga os passos abaixo para desbloquear seu badge de Designer!</p>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step1')">
+            <div class="flex items-center">
+                <div class="step-number bg-blue-500 shadow-md group-hover:scale-110 transition-transform">1</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Preparação no Canva</h3>
+                    <p class="text-xs text-gray-500">Configurando sua conta e arquivo</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step1" class="step-content">
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">🌐</span> <span>Acesse <strong>canva.com</strong> e faça login</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">📄</span> <span>Clique em "Criar um design" > "Post para Instagram (Quadrado)"</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">🔍</span> <span>No menu lateral, busque por templates "Saúde" ou "Educação"</span></li>
+                </ul>
+                <button onclick="completeStep(this, event)" class="w-full bg-blue-50 text-blue-600 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors border border-blue-200">
+                    Concluir Passo 1
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step2')">
+            <div class="flex items-center">
+                <div class="step-number bg-purple-500 shadow-md group-hover:scale-110 transition-transform">2</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Conteúdo e Texto</h3>
+                    <p class="text-xs text-gray-500">Definindo o que escrever</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step2" class="step-content">
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">✍️</span> <span>Escolha um tema: Neurônios, Cérebro ou Sinapses</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">📝</span> <span>Crie um título curto e chamativo (Ex: "Você sabia?")</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">🧠</span> <span>Adicione 2 ou 3 curiosidades curtas sobre o tema</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">⚠️</span> <span>Use linguagem simples, evite termos muito técnicos</span></li>
+                </ul>
+                <button onclick="completeStep(this, event)" class="w-full bg-purple-50 text-purple-600 py-3 rounded-lg font-bold hover:bg-purple-100 transition-colors border border-purple-200">
+                    Concluir Passo 2
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step3')">
+            <div class="flex items-center">
+                <div class="step-number bg-orange-500 shadow-md group-hover:scale-110 transition-transform">3</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Design e Imagens</h3>
+                    <p class="text-xs text-gray-500">Deixando o post visual</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step3" class="step-content">
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">🖼️</span> <span>Vá em "Elementos" e busque por "Cérebro" ou "Neurônio"</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">🎨</span> <span>Escolha cores que contrastem bem (fundo claro, letra escura)</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">📏</span> <span>Aumente o tamanho da fonte para ficar legível no celular</span></li>
+                </ul>
+                <button onclick="completeStep(this, event)" class="w-full bg-orange-50 text-orange-600 py-3 rounded-lg font-bold hover:bg-orange-100 transition-colors border border-orange-200">
+                    Concluir Passo 3
+                </button>
+            </div>
+        </div>
+
+        <div class="step-card group" onclick="toggleStep('step4')">
+            <div class="flex items-center">
+                <div class="step-number bg-green-500 shadow-md group-hover:scale-110 transition-transform">4</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800">Finalização</h3>
+                    <p class="text-xs text-gray-500">Baixar e Salvar</p>
+                </div>
+                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
+            </div>
+            <div id="step4" class="step-content">
+                <ul class="space-y-3 text-sm text-gray-600 mb-4">
+                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">👀</span> <span>Revise se não há erros de digitação</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">💾</span> <span>Clique em "Compartilhar" > "Baixar"</span></li>
+                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">📁</span> <span>Escolha o formato PNG ou JPG e salve no seu dispositivo</span></li>
+                </ul>
+                <div class="bg-green-100 p-4 rounded-lg mt-3 text-sm text-green-800 text-center font-bold border border-green-200">
+                    🎉 Parabéns! Você criou seu material educativo com IA!
+                </div>
+                <button onclick="completeStep(this, event)" class="mt-4 w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-lg">
+                    Finalizar Módulo
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="floating-btn" style="top: 100px; background: #3b82f6;" onclick="openModal('trackerModal')">
+        📊<div class="tooltip">Ver Progresso</div>
+    </div>
+    
+    <div class="floating-btn" style="top: 170px; background: #10b981;" onclick="openModal('tipsModal')">
+        💡<div class="tooltip">Dicas Rápidas</div>
+    </div>
+
+    <div class="chat-widget">
+        <div class="chat-button animate-bounce" onclick="toggleChat()">
+            <span class="text-2xl">🤖</span>
+        </div>
+        <div id="chatPanel" class="chat-panel">
+            <div class="bg-blue-600 text-white p-3 font-bold flex justify-between items-center">
+                <span class="flex items-center gap-2"><span class="text-xl">🤖</span> Assistente IA</span>
+                <span onclick="toggleChat()" class="cursor-pointer p-1 hover:bg-white/20 rounded">✕</span>
+            </div>
+            <div id="chatMessages" class="p-4 h-64 overflow-y-auto bg-gray-50 space-y-3 text-sm">
+                <div class="bg-white p-3 rounded-lg shadow-sm max-w-[90%] border border-gray-100">
+                    👋 Olá! Precisa de ajuda com o Canva ou com o conteúdo do post? É só perguntar!
+                </div>
+            </div>
+            <div class="p-3 border-t bg-white flex gap-2">
+                <input type="text" id="chatInput" placeholder="Dúvida..." class="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeypress="handleEnter(event)">
+                <button onclick="sendMessage()" class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="trackerModal" class="modal" onclick="if(event.target === this) closeModal('trackerModal')">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">Seu Progresso</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span>1. Preparação</span>
+                    <span id="status1">⭕ Pendente</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span>2. Conteúdo</span>
+                    <span id="status2">⭕ Pendente</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <span>3. Design</span>
+                    <span id="status3">⭕ Pendente</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>4. Finalização</span>
+                    <span id="status4">⭕ Pendente</span>
+                </div>
+            </div>
+            <button onclick="closeModal('trackerModal')" class="mt-6 w-full bg-gray-200 py-2 rounded-lg font-bold text-gray-700 hover:bg-gray-300">Fechar</button>
+        </div>
+    </div>
+
+    <div id="tipsModal" class="modal" onclick="if(event.target === this) closeModal('tipsModal')">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4 text-yellow-600">💡 Dicas de Ouro</h3>
+            <ul class="space-y-3 text-gray-700">
+                <li class="bg-yellow-50 p-3 rounded border border-yellow-100">🎨 <strong>Menos é mais:</strong> Não encha o slide de texto. Deixe espaços em branco.</li>
+                <li class="bg-yellow-50 p-3 rounded border border-yellow-100">👁️ <strong>Contraste:</strong> Se o fundo for escuro, letra clara. Se fundo claro, letra escura.</li>
+                <li class="bg-yellow-50 p-3 rounded border border-yellow-100">📱 <strong>Pense no celular:</strong> A maioria das pessoas vai ver seu post numa tela pequena.</li>
+            </ul>
+            <button onclick="closeModal('tipsModal')" class="mt-6 w-full bg-gray-200 py-2 rounded-lg font-bold text-gray-700 hover:bg-gray-300">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer
+        let timeLeft = 50 * 60;
+        setInterval(() => {
+            if(timeLeft > 0) {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                let s = (timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }
+        }, 1000);
+
+        // UI Functions
+        function toggleStep(id) {
+            const content = document.getElementById(id);
+            const isVisible = content.classList.contains('show');
+            
+            // Fecha todos
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.remove('show');
+            });
+
+            // Abre o clicado se não estava visível
+            if (!isVisible) {
+                content.classList.add('show');
+                // Scroll suave para o elemento
+                setTimeout(() => {
+                    content.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+        let stepsDone = 0;
+        function completeStep(btn, event) {
+            event.stopPropagation(); // Impede que o card feche ao clicar no botão
+            
+            if (btn.innerText.includes("Concluído")) return; // Já foi clicado
+
+            btn.innerText = "Concluído ✅";
+            btn.classList.remove('bg-blue-50', 'text-blue-600', 'bg-purple-50', 'text-purple-600', 'bg-orange-50', 'text-orange-600');
+            btn.classList.add('bg-green-100', 'text-green-700', 'cursor-default');
+            
+            // Marca o número como feito
+            const number = btn.parentElement.parentElement.querySelector('.step-number');
+            number.innerHTML = "✓";
+            number.classList.add('bg-green-500');
+            
+            stepsDone++;
+            let pct = (stepsDone / 4) * 100;
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('progress-text').innerText = `${Math.round(pct)}%`;
+            
+            // Update modal status
+            let stepIndex = btn.parentElement.id.replace('step', '');
+            document.getElementById(`status${stepIndex}`).innerText = "✅ Feito";
+            document.getElementById(`status${stepIndex}`).classList.add('text-green-600', 'font-bold');
+
+            // Close current, open next if exists
+            let nextStep = parseInt(stepIndex) + 1;
+            if(document.getElementById(`step${nextStep}`)) {
+                setTimeout(() => toggleStep(`step${nextStep}`), 500);
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+        // Chat
+        function toggleChat() { document.getElementById('chatPanel').classList.toggle('show'); }
+        
+        function handleEnter(e) {
+            if(e.key === 'Enter') sendMessage();
+        }
+
+        function sendMessage() {
+            let input = document.getElementById('chatInput');
+            let msg = input.value.trim();
+            if(!msg) return;
+
+            addMsg(msg, true);
+            input.value = '';
+
+            // Resposta automática simples para demonstração
+            setTimeout(() => {
+                let response = "Interessante! Lembre-se de usar o Canva para visualizar isso. Tente buscar por termos relacionados em 'Elementos'.";
+                
+                if(msg.toLowerCase().includes('cor')) response = "🎨 Para saúde, tons de azul e verde passam confiança. Evite vermelho excessivo.";
+                if(msg.toLowerCase().includes('fonte')) response = "✍️ Use fontes sem serifa como 'Open Sans' ou 'Roboto' para facilitar a leitura no digital.";
+                if(msg.toLowerCase().includes('imagem')) response = "🖼️ Busque por ilustrações simples (flat design) para não poluir o visual.";
+                
+                addMsg(response, false);
+            }, 800);
+        }
+
+        function addMsg(text, isUser) {
+            let div = document.createElement('div');
+            div.className = isUser ? "bg-blue-100 p-2 rounded-lg self-end ml-8 text-blue-900" : "bg-white p-2 rounded-lg shadow-sm mr-8 border text-gray-700";
+            div.innerText = text;
+            let container = document.getElementById('chatMessages');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>
