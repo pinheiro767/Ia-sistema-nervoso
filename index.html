@@ -2,284 +2,903 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="theme-color" content="#667eea">
-    <title>Design Visual com IA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA e o Sistema Nervoso - Curso de Comunicação Científica</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
-        .floating-btn {
-            position: fixed; left: 10px; z-index: 1000; width: 50px; height: 50px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 18px; border: 2px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        @media (min-width: 768px) { .floating-btn { left: 20px; width: 60px; height: 60px; font-size: 24px; } }
         
-        .step-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; }
-        .step-card:active { transform: scale(0.98); }
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
         
-        .step-number { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 16px; color: white; }
-        .step-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
-        .step-content.show { display: block; animation: slideDown 0.3s ease-out; }
-
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-        .chat-button { width: 60px; height: 60px; border-radius: 50%; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; }
-        .chat-button:hover { transform: scale(1.1); }
-        .chat-panel { position: absolute; bottom: 80px; right: 0; width: 300px; background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: none; overflow: hidden; border: 1px solid #e5e7eb; }
-        .chat-panel.show { display: block; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .card-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+        }
+        
+        .card-3d:hover::before {
+            opacity: 1;
+        }
+        
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+        }
+        
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .glow-button:hover::before {
+            left: 100%;
+        }
+        
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 193, 7, 0.6);
+            }
+        }
+        
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatUp 8s infinite linear;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        .module-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .card-3d:hover .module-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 2rem 0;
+        }
+        
+        /* Simple Robot Chatbot */
+        .robot-bounce {
+            animation: robotBounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes robotBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .robot-blink {
+            animation: robotBlink 3s infinite;
+        }
+        
+        @keyframes robotBlink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        
+        .chat-slide-up {
+            animation: chatSlideUp 0.3s ease-out;
+        }
+        
+        @keyframes chatSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-fade-in {
+            animation: messageFadeIn 0.5s ease-out;
+        }
+        
+        @keyframes messageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen pb-24">
-
-    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-6 shadow-lg sticky top-0 z-40">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <span class="text-3xl">🎨</span>
-                <div>
-                    <h1 class="text-lg font-bold leading-tight">Módulo 2: Design Visual</h1>
-                    <p class="text-xs text-blue-100">Guia Prático Interativo</p>
-                </div>
-            </div>
-            <div class="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-                <span id="timer" class="font-mono font-bold">50:00</span>
-            </div>
+<body class="bg-gray-50">
+    <section class="hero-bg min-h-screen flex items-center justify-center relative">
+        <div class="floating-particles">
+            <div class="particle" style="left: 10%; width: 4px; height: 4px; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 30%; width: 3px; height: 3px; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 40%; width: 5px; height: 5px; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 50%; width: 4px; height: 4px; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 60%; width: 6px; height: 6px; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; width: 3px; height: 3px; animation-delay: 2.5s;"></div>
+            <div class="particle" style="left: 80%; width: 5px; height: 5px; animation-delay: 4.5s;"></div>
+            <div class="particle" style="left: 90%; width: 4px; height: 4px; animation-delay: 1.5s;"></div>
         </div>
-    </header>
-
-    <div class="bg-white shadow-sm sticky top-[76px] z-30">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between text-xs text-gray-500 mb-1">
-                <span>Progresso da Atividade</span>
-                <span id="progress-text">0%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div id="progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-        </div>
-    </div>
-
-    <main class="container mx-auto px-4 py-6 max-w-2xl">
         
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg shadow-sm">
-            <h2 class="text-blue-800 font-bold mb-1 flex items-center gap-2">
-                <span class="text-xl">🎯</span> Objetivo da Aula
-            </h2>
-            <p class="text-blue-700 text-sm">Crie um card educativo sobre o Sistema Nervoso utilizando o Canva. Siga os passos abaixo para desbloquear seu badge de Designer!</p>
-        </div>
-
-        <div class="step-card group" onclick="toggleStep('step1')">
-            <div class="flex items-center">
-                <div class="step-number bg-blue-500 shadow-md group-hover:scale-110 transition-transform">1</div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800">Preparação no Canva</h3>
-                    <p class="text-xs text-gray-500">Configurando sua conta e arquivo</p>
-                </div>
-                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
-            </div>
-            <div id="step1" class="step-content">
-                <ul class="space-y-3 text-sm text-gray-600 mb-4">
-                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">🌐</span> <span>Acesse <strong>canva.com</strong> e faça login</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">📄</span> <span>Clique em "Criar um design" > "Post para Instagram (Quadrado)"</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-blue-100 p-1 rounded text-xs">🔍</span> <span>No menu lateral, busque por templates "Saúde" ou "Educação"</span></li>
-                </ul>
-                <button onclick="completeStep(this, event)" class="w-full bg-blue-50 text-blue-600 py-3 rounded-lg font-bold hover:bg-blue-100 transition-colors border border-blue-200">
-                    Concluir Passo 1
-                </button>
-            </div>
-        </div>
-
-        <div class="step-card group" onclick="toggleStep('step2')">
-            <div class="flex items-center">
-                <div class="step-number bg-purple-500 shadow-md group-hover:scale-110 transition-transform">2</div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800">Conteúdo e Texto</h3>
-                    <p class="text-xs text-gray-500">Definindo o que escrever</p>
-                </div>
-                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
-            </div>
-            <div id="step2" class="step-content">
-                <ul class="space-y-3 text-sm text-gray-600 mb-4">
-                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">✍️</span> <span>Escolha um tema: Neurônios, Cérebro ou Sinapses</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">📝</span> <span>Crie um título curto e chamativo (Ex: "Você sabia?")</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">🧠</span> <span>Adicione 2 ou 3 curiosidades curtas sobre o tema</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-purple-100 p-1 rounded text-xs">⚠️</span> <span>Use linguagem simples, evite termos muito técnicos</span></li>
-                </ul>
-                <button onclick="completeStep(this, event)" class="w-full bg-purple-50 text-purple-600 py-3 rounded-lg font-bold hover:bg-purple-100 transition-colors border border-purple-200">
-                    Concluir Passo 2
-                </button>
-            </div>
-        </div>
-
-        <div class="step-card group" onclick="toggleStep('step3')">
-            <div class="flex items-center">
-                <div class="step-number bg-orange-500 shadow-md group-hover:scale-110 transition-transform">3</div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800">Design e Imagens</h3>
-                    <p class="text-xs text-gray-500">Deixando o post visual</p>
-                </div>
-                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
-            </div>
-            <div id="step3" class="step-content">
-                <ul class="space-y-3 text-sm text-gray-600 mb-4">
-                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">🖼️</span> <span>Vá em "Elementos" e busque por "Cérebro" ou "Neurônio"</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">🎨</span> <span>Escolha cores que contrastem bem (fundo claro, letra escura)</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-orange-100 p-1 rounded text-xs">📏</span> <span>Aumente o tamanho da fonte para ficar legível no celular</span></li>
-                </ul>
-                <button onclick="completeStep(this, event)" class="w-full bg-orange-50 text-orange-600 py-3 rounded-lg font-bold hover:bg-orange-100 transition-colors border border-orange-200">
-                    Concluir Passo 3
-                </button>
-            </div>
-        </div>
-
-        <div class="step-card group" onclick="toggleStep('step4')">
-            <div class="flex items-center">
-                <div class="step-number bg-green-500 shadow-md group-hover:scale-110 transition-transform">4</div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800">Finalização</h3>
-                    <p class="text-xs text-gray-500">Baixar e Salvar</p>
-                </div>
-                <span class="text-gray-400 text-xl transform transition-transform group-hover:translate-y-1">▼</span>
-            </div>
-            <div id="step4" class="step-content">
-                <ul class="space-y-3 text-sm text-gray-600 mb-4">
-                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">👀</span> <span>Revise se não há erros de digitação</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">💾</span> <span>Clique em "Compartilhar" > "Baixar"</span></li>
-                    <li class="flex gap-3 items-start"><span class="bg-green-100 p-1 rounded text-xs">📁</span> <span>Escolha o formato PNG ou JPG e salve no seu dispositivo</span></li>
-                </ul>
-                <div class="bg-green-100 p-4 rounded-lg mt-3 text-sm text-green-800 text-center font-bold border border-green-200">
-                    🎉 Parabéns! Você criou seu material educativo com IA!
-                </div>
-                <button onclick="completeStep(this, event)" class="mt-4 w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-lg">
-                    Finalizar Módulo
-                </button>
-            </div>
-        </div>
-
-    </main>
-
-    <div class="chat-widget">
-        <div class="chat-button animate-bounce" onclick="toggleChat()">
-            <span class="text-2xl">🤖</span>
-        </div>
-        <div id="chatPanel" class="chat-panel">
-            <div class="bg-blue-600 text-white p-3 font-bold flex justify-between items-center">
-                <span class="flex items-center gap-2"><span class="text-xl">🤖</span> Assistente IA</span>
-                <span onclick="toggleChat()" class="cursor-pointer p-1 hover:bg-white/20 rounded">✕</span>
-            </div>
-            <div id="chatMessages" class="p-4 h-64 overflow-y-auto bg-gray-50 space-y-3 text-sm">
-                <div class="bg-white p-3 rounded-lg shadow-sm max-w-[90%] border border-gray-100">
-                    👋 Olá! Precisa de ajuda com o Canva ou com o conteúdo do post? É só perguntar!
+        <div class="container mx-auto px-6 text-center text-white relative z-10">
+            <div class="scroll-reveal">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    IA e o Sistema
+                    <span class="block text-yellow-300">Nervoso</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto leading-relaxed">
+                    Revolucione sua comunicação científica com inteligência artificial
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="scrollToModules()" class="glow-button text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg">
+                        Explorar Módulos 🚀
+                    </button>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfDIGG67Y4m-WHbZr-FyKIV3_OT5UGEYgb39-KkgCCQR64x1A/viewform" target="_blank" class="pulse-glow bg-yellow-400 text-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 transition-all duration-300">
+                        Inscrever-se Agora ⭐
+                    </a>
                 </div>
             </div>
-            <div class="p-3 border-t bg-white flex gap-2">
-                <input type="text" id="chatInput" placeholder="Dúvida..." class="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeypress="handleEnter(event)">
-                <button onclick="sendMessage()" class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">➤</button>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white opacity-70">
+            <div class="animate-bounce">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-br from-indigo-400 to-pink-500 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-2xl"></div>
+        </div>
+        
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="scroll-reveal">
+                <div class="bg-white/80 backdrop-blur-xl rounded-3xl p-12 md:p-16 shadow-2xl border border-white/30 text-center">
+                    <div class="mb-8">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-6 shadow-lg">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-4xl md:text-5xl font-bold text-gradient mb-6 leading-tight">
+                            🎉 Bem-vindos ao Curso de Extensão!
+                        </h1>
+                    </div>
+
+                    <div class="max-w-4xl mx-auto mb-12">
+                        <p class="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
+                            Você está prestes a iniciar uma jornada <span class="text-gradient font-semibold">criativa e inovadora</span> com o curso
+                        </p>
+                        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-2xl shadow-lg mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold mb-2">
+                                IA e o Sistema Nervoso
+                            </h2>
+                            <p class="text-lg opacity-90">
+                                Comunicação Digital para a Prática e Alcance em Saúde
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-white/90 to-blue-50/90 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/40 mb-12">
+                        <div class="flex items-center justify-center mb-8">
+                            <div class="bg-gradient-to-br from-orange-400 to-pink-500 p-4 rounded-2xl shadow-lg mr-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-3xl md:text-4xl font-bold text-gradient">
+                                O que você vai aprender?
+                            </h2>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-4">
+                                        <span class="text-white text-xl">🤖</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800">Inteligência Artificial</h3>
+                                </div>
+                                <p class="text-gray-600">Ferramentas e técnicas de IA para criação de conteúdo</p>
+                            </div>
+                            
+                            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4">
+                                        <span class="text-white text-xl">🎨</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800">Design de Conteúdo</h3>
+                                </div>
+                                <p class="text-gray-600">Criação visual profissional e impactante</p>
+                            </div>
+                            
+                            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mr-4">
+                                        <span class="text-white text-xl">📖</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800">Storytelling</h3>
+                                </div>
+                                <p class="text-gray-600">Narrativas envolventes para comunicação científica</p>
+                            </div>
+                            
+                            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center mr-4">
+                                        <span class="text-white text-xl">⚖️</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800">Ética Digital</h3>
+                                </div>
+                                <p class="text-gray-600">Práticas responsáveis na era digital</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-2xl p-6 shadow-xl">
+                            <div class="flex items-center justify-center mb-4">
+                                <span class="text-3xl mr-3">🎯</span>
+                                <h3 class="text-2xl font-bold">O Resultado?</h3>
+                            </div>
+                            <p class="text-lg font-medium">
+                                Conteúdos incríveis para redes sociais e prática profissional responsável com foco em saúde e sistema nervoso!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="scroll-reveal" style="animation-delay: 0.3s;">
+                        <a href="cronograma.html" class="glow-button text-white px-10 py-5 rounded-full font-bold text-xl inline-flex items-center gap-3 shadow-2xl hover:scale-105 transition-all duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>📅 Acesse o Cronograma Semanal</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="modules" class="py-20 px-6 bg-gradient-to-br from-gray-50 to-blue-50 relative">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold text-gradient mb-6">
+                    📚 Módulos do Curso
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Cada módulo foi cuidadosamente desenvolvido para maximizar seu aprendizado
+                </p>
+                <div class="section-divider"></div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="scroll-reveal" style="animation-delay: 0.1s;">
+                    <a href="modulo1.html" class="card-3d bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="40" height="40" viewBox="0 0 40 40" class="text-white">
+                                    <path d="M20 5 L35 15 L35 25 L20 35 L5 25 L5 15 Z" fill="currentColor" opacity="0.8"/>
+                                    <circle cx="20" cy="20" r="8" fill="currentColor"/>
+                                    <circle cx="20" cy="20" r="4" fill="rgba(255,255,255,0.9)"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Módulo 1</h3>
+                        <p class="text-lg opacity-90 mb-4">Ética na Saúde Digital</p>
+                        <div class="text-sm opacity-75">
+                            Fundamentos • Ética • Responsabilidade
+                        </div>
+                    </a>
+                </div>
+
+                <div class="scroll-reveal" style="animation-delay: 0.2s;">
+                    <a href="modulo2.html" class="card-3d bg-gradient-to-br from-green-500 to-teal-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="40" height="40" viewBox="0 0 40 40" class="text-white">
+                                    <rect x="5" y="10" width="30" height="20" rx="4" fill="currentColor" opacity="0.8"/>
+                                    <circle cx="15" cy="15" r="3" fill="#EF4444"/>
+                                    <circle cx="25" cy="15" r="3" fill="#3B82F6"/>
+                                    <circle cx="20" cy="25" r="3" fill="#10B981"/>
+                                    <path d="M2 5 L8 2 L6 8 Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Módulo 2</h3>
+                        <p class="text-lg opacity-90 mb-4">Design Visual com IA</p>
+                        <div class="text-sm opacity-75">
+                            Canva Mobile • Guia Interativo • Prática
+                        </div>
+                    </a>
+                </div>
+
+                <div class="scroll-reveal" style="animation-delay: 0.3s;">
+                    <a href="modulo3.html" class="card-3d bg-gradient-to-br from-orange-500 to-red-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="40" height="40" viewBox="0 0 40 40" class="text-white">
+                                    <rect x="8" y="5" width="24" height="30" rx="3" fill="currentColor" opacity="0.8"/>
+                                    <rect x="12" y="10" width="16" height="2" rx="1" fill="rgba(255,255,255,0.9)"/>
+                                    <rect x="12" y="15" width="12" height="2" rx="1" fill="rgba(255,255,255,0.9)"/>
+                                    <rect x="12" y="20" width="14" height="2" rx="1" fill="rgba(255,255,255,0.9)"/>
+                                    <circle cx="35" cy="15" r="4" fill="#FBBF24"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Módulo 3</h3>
+                        <p class="text-lg opacity-90 mb-4">Storytelling & Carrosséis</p>
+                        <div class="text-sm opacity-75">
+                            Narrativa • Carrosséis • Certificado
+                        </div>
+                    </a>
+                </div>
+
+                <div class="scroll-reveal" style="animation-delay: 0.4s;">
+                    <a href="modulo4.html" class="card-3d bg-gradient-to-br from-purple-500 to-pink-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="40" height="40" viewBox="0 0 40 40" class="text-white">
+                                    <rect x="12" y="8" width="16" height="24" rx="4" fill="currentColor" opacity="0.8"/>
+                                    <rect x="14" y="12" width="12" height="16" rx="2" fill="rgba(255,255,255,0.9)"/>
+                                    <rect x="16" y="15" width="8" height="3" rx="1" fill="#EC4899"/>
+                                    <circle cx="30" cy="18" r="3" fill="#EF4444"/>
+                                    <path d="M8 25 L12 25" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Módulo 4</h3>
+                        <p class="text-lg opacity-90 mb-4">Instagram Presencial</p>
+                        <div class="text-sm opacity-75">
+                            Guia de Bolso • Perguntas • Apoio
+                        </div>
+                    </a>
+                </div>
+
+                <div class="scroll-reveal" style="animation-delay: 0.5s;">
+                    <a href="modulo5.html" class="card-3d bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <svg width="40" height="40" viewBox="0 0 40 40" class="text-white">
+                                    <path d="M20 5 L15 15 L25 15 Z" fill="currentColor"/>
+                                    <ellipse cx="20" cy="20" rx="5" ry="12" fill="currentColor" opacity="0.8"/>
+                                    <circle cx="20" cy="18" r="3" fill="rgba(255,255,255,0.9)"/>
+                                    <path d="M15 28 L12 35 L15 32 Z" fill="rgba(255,255,255,0.7)"/>
+                                    <path d="M25 28 L28 35 L25 32 Z" fill="rgba(255,255,255,0.7)"/>
+                                    <ellipse cx="20" cy="35" rx="4" ry="6" fill="#EF4444"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Módulo 5</h3>
+                        <p class="text-lg opacity-90 mb-4">Design Thinking</p>
+                        <div class="text-sm opacity-75">
+                            Casos Clínicos • Posts Reais • IA
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="scroll-reveal" style="animation-delay: 0.6s;">
+                    <a href="saude-reprodutiva.html" class="card-3d bg-gradient-to-br from-pink-500 to-rose-600 text-white p-8 rounded-3xl shadow-xl block group">
+                        <div class="mb-6 module-icon">
+                            <div class="w-20 h-20 mx-auto bg-white/20 rounded-2xl flex items-center justify-center">
+                                <span class="text-4xl">🩺</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Saúde Reprodutiva</h3>
+                        <p class="text-lg opacity-90 mb-4">Projeto Especial</p>
+                        <div class="text-sm opacity-75">
+                            Conteúdo Extra • Aplicação Prática
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 bg-white relative overflow-hidden">
+        <div class="container mx-auto max-w-4xl">
+            <div class="scroll-reveal">
+                <div class="glassmorphism p-12 rounded-3xl text-center border border-gray-200 shadow-2xl">
+                    <div class="text-6xl mb-6">🤔</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        Tem dúvidas sobre o curso?
+                    </h3>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        Acesse nossa página completa com informações detalhadas sobre cronograma, 
+                        metodologia, certificação e muito mais
+                    </p>
+                    <a href="faq.html" class="glow-button text-white px-10 py-5 rounded-full font-bold text-lg inline-flex items-center gap-3 shadow-xl">
+                        <span>Ver Perguntas Frequentes</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 gradient-bg text-white relative overflow-hidden">
+        <div class="floating-particles">
+            <div class="particle" style="left: 15%; width: 3px; height: 3px; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 35%; width: 5px; height: 5px; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 55%; width: 4px; height: 4px; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 75%; width: 6px; height: 6px; animation-delay: 4s;"></div>
+        </div>
+        
+        <div class="container mx-auto max-w-4xl text-center relative z-10">
+            <div class="scroll-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold mb-8">
+                    Transforme sua Comunicação Científica
+                </h2>
+                <p class="text-xl mb-12 opacity-90 max-w-2xl mx-auto leading-relaxed">
+                    Junte-se a centenas de profissionais de saúde que já revolucionaram 
+                    sua presença digital com inteligência artificial
+                </p>
+                
+                <div class="glassmorphism rounded-3xl p-10 mb-12 max-w-3xl mx-auto">
+                    <div class="grid md:grid-cols-3 gap-8 text-center">
+                        <div class="scroll-reveal" style="animation-delay: 0.1s;">
+                            <div class="text-4xl font-bold mb-2">10h</div>
+                            <div class="opacity-80 text-lg">Conteúdo Prático</div>
+                        </div>
+                        <div class="scroll-reveal" style="animation-delay: 0.2s;">
+                            <div class="text-4xl font-bold mb-2">5</div>
+                            <div class="opacity-80 text-lg">Módulos Completos</div>
+                        </div>
+                        <div class="scroll-reveal" style="animation-delay: 0.3s;">
+                            <div class="text-4xl font-bold mb-2">100%</div>
+                            <div class="opacity-80 text-lg">Presencial</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfDIGG67Y4m-WHbZr-FyKIV3_OT5UGEYgb39-KkgCCQR64x1A/viewform" target="_blank" class="pulse-glow bg-yellow-400 text-gray-800 px-10 py-5 rounded-full font-bold text-xl hover:bg-yellow-300 transition-all duration-300 inline-flex items-center gap-3">
+                        <span>Garantir Minha Vaga</span>
+                        <span class="text-2xl">🎯</span>
+                    </a>
+                    <div class="text-center">
+                        <div class="text-sm opacity-80">⚡ Vagas limitadas</div>
+                        <div class="text-sm opacity-80">🚀 Início em breve</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="robot-chatbot" class="fixed bottom-6 right-6 z-50">
+        <div id="robot-toggle" class="cursor-pointer robot-bounce">
+            <div class="relative">
+                <div class="w-16 h-20 bg-gradient-to-b from-blue-400 to-blue-600 rounded-2xl border-4 border-blue-300 shadow-lg relative">
+                    <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-b from-gray-300 to-gray-400 rounded-xl border-3 border-gray-200 shadow-md">
+                        <div class="flex justify-center items-center h-full space-x-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full robot-blink"></div>
+                            <div class="w-2 h-2 bg-green-400 rounded-full robot-blink"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-black rounded border border-gray-300">
+                        <div class="text-green-400 text-xs text-center leading-6 font-mono">Hi!</div>
+                    </div>
+                    
+                    <div class="absolute top-4 -left-2 w-3 h-8 bg-gradient-to-b from-gray-300 to-gray-400 rounded-full border border-gray-200"></div>
+                    <div class="absolute top-4 -right-2 w-3 h-8 bg-gradient-to-b from-gray-300 to-gray-400 rounded-full border border-gray-200"></div>
+                    
+                    <div class="absolute -bottom-2 left-2 w-3 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-full border border-gray-200"></div>
+                    <div class="absolute -bottom-2 right-2 w-3 h-6 bg-gradient-to-b from-gray-300 to-gray-400 rounded-full border border-gray-200"></div>
+                </div>
+                
+                <div class="absolute -top-16 -left-8 bg-white rounded-lg px-3 py-2 shadow-lg border border-gray-200 text-sm font-medium text-gray-800 whitespace-nowrap">
+                    Oi! Clique aqui! 🤖
+                    <div class="absolute bottom-0 left-8 transform translate-y-full">
+                        <div class="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="chat-window" class="hidden absolute bottom-24 right-0 w-80 h-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-sm">🤖</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">NeuroBot</h3>
+                            <p class="text-xs opacity-80">Assistente do Curso</p>
+                        </div>
+                    </div>
+                    <button id="close-chat" class="text-white hover:bg-white/20 rounded-full p-1 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="chat-messages" class="flex-1 p-4 h-64 overflow-y-auto bg-gray-50">
+                <div class="space-y-3">
+                    <div class="flex items-start message-fade-in">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-3 flex-shrink-0">
+                            🤖
+                        </div>
+                        <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                            <p class="text-sm text-gray-800">Olá! Sou o NeuroBot, seu assistente do curso! Como posso ajudar você hoje? 😊</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Digite sua pergunta..." 
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+                    >
+                    <button 
+                        id="send-message"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                    >
+                        Enviar
+                    </button>
+                </div>
+                
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button class="quick-action bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition-colors" data-message="Como funciona o curso?">
+                        📚 Sobre o curso
+                    </button>
+                    <button class="quick-action bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition-colors" data-message="Quais são os módulos?">
+                        📖 Módulos
+                    </button>
+                    <button class="quick-action bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition-colors" data-message="Como me inscrever?">
+                        ✍️ Inscrição
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Timer
-        let timeLeft = 50 * 60;
-        setInterval(() => {
-            if(timeLeft > 0) {
-                timeLeft--;
-                let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                let s = (timeLeft % 60).toString().padStart(2, '0');
-                document.getElementById('timer').innerText = `${m}:${s}`;
-            }
-        }, 1000);
+        // Robot responses
+        const robotResponses = {
+            "como funciona o curso": "O curso tem 5 módulos práticos sobre IA e comunicação científica! Você vai aprender a usar ferramentas de IA para criar conteúdo incrível sobre neurociência e saúde. É 100% presencial com certificação! 🎓",
+            "quais são os módulos": "Temos 5 módulos incríveis: 1) Ética na Saúde Digital, 2) Design Visual com IA, 3) Storytelling e Carrosséis, 4) Instagram Presencial, 5) Design Thinking e Projeto Final. Cada um com atividades práticas! 📚",
+            "como me inscrever": "É super fácil! Clique no botão 'Inscrever-se Agora' na página ou acesse o link direto. As vagas são limitadas, então corre! 🏃‍♂️💨",
+            "neurônio": "Os neurônios são células incríveis! Eles transmitem informações através de impulsos elétricos a até 120 m/s. Seu cérebro tem 86 bilhões deles! ⚡🧠",
+            "cérebro": "O cérebro humano é uma máquina incrível! Consome 20% da energia do corpo, tem 86 bilhões de neurônios e processa informações mais rápido que qualquer computador! 🧠💪",
+            "ia": "A Inteligência Artificial está revolucionando a comunicação científica! No curso, você vai aprender a usar ChatGPT, Canva AI e outras ferramentas para criar conteúdo incrível! 🤖✨",
+            "default": [
+                "Interessante! No curso você vai aprender muito sobre isso. Que tal se inscrever? 😊",
+                "Boa pergunta! Nosso curso aborda temas fascinantes sobre IA e neurociência! 🧠",
+                "Posso ajudar com informações sobre o curso! Use os botões rápidos ou pergunte sobre módulos, inscrição ou conteúdo! 🤖"
+            ]
+        };
 
-        // UI Functions
-        function toggleStep(id) {
-            const content = document.getElementById(id);
-            const isVisible = content.classList.contains('show');
-            
-            // Fecha todos
-            document.querySelectorAll('.step-content').forEach(el => {
-                el.classList.remove('show');
+        // Initialize chatbot
+        document.addEventListener('DOMContentLoaded', function() {
+            const robotToggle = document.getElementById('robot-toggle');
+            const chatWindow = document.getElementById('chat-window');
+            const closeChat = document.getElementById('close-chat');
+            const chatInput = document.getElementById('chat-input');
+            const sendMessage = document.getElementById('send-message');
+            const quickActions = document.querySelectorAll('.quick-action');
+
+            // Toggle chat window
+            robotToggle.addEventListener('click', function() {
+                if (chatWindow.classList.contains('hidden')) {
+                    chatWindow.classList.remove('hidden');
+                    chatWindow.classList.add('chat-slide-up');
+                } else {
+                    chatWindow.classList.add('hidden');
+                }
             });
 
-            // Abre o clicado se não estava visível
-            if (!isVisible) {
-                content.classList.add('show');
-                // Scroll suave para o elemento
-                setTimeout(() => {
-                    content.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+            // Close chat
+            closeChat.addEventListener('click', function() {
+                chatWindow.classList.add('hidden');
+            });
+
+            // Send message
+            function sendUserMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    addUserMessage(message);
+                    chatInput.value = '';
+                    
+                    // Robot response
+                    setTimeout(() => {
+                        addRobotMessage(getRobotResponse(message));
+                    }, 1000);
+                }
             }
-        }
 
-        let stepsDone = 0;
-        function completeStep(btn, event) {
-            event.stopPropagation(); // Impede que o card feche ao clicar no botão
-            
-            if (btn.innerText.includes("Concluído")) return; // Já foi clicado
+            sendMessage.addEventListener('click', sendUserMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendUserMessage();
+                }
+            });
 
-            btn.innerText = "Concluído ✅";
-            btn.classList.remove('bg-blue-50', 'text-blue-600', 'bg-purple-50', 'text-purple-600', 'bg-orange-50', 'text-orange-600');
-            btn.classList.add('bg-green-100', 'text-green-700', 'cursor-default');
-            
-            // Marca o número como feito
-            const number = btn.parentElement.parentElement.querySelector('.step-number');
-            number.innerHTML = "✓";
-            number.classList.add('bg-green-500');
-            
-            stepsDone++;
-            let pct = (stepsDone / 4) * 100;
-            document.getElementById('progress-bar').style.width = `${pct}%`;
-            document.getElementById('progress-text').innerText = `${Math.round(pct)}%`;
+            // Quick actions
+            quickActions.forEach(button => {
+                button.addEventListener('click', function() {
+                    const message = this.getAttribute('data-message');
+                    addUserMessage(message);
+                    setTimeout(() => {
+                        addRobotMessage(getRobotResponse(message));
+                    }, 1000);
+                });
+            });
 
-            // Abre o próximo passo automaticamente
-            let currentId = btn.parentElement.id; // step1, step2...
-            let nextNum = parseInt(currentId.replace('step', '')) + 1;
-            if (nextNum <= 4) {
-                setTimeout(() => toggleStep('step' + nextNum), 500);
+            // Add user message
+            function addUserMessage(message) {
+                const messagesContainer = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex items-start justify-end mb-3 message-fade-in';
+                messageDiv.innerHTML = `
+                    <div class="bg-blue-500 text-white rounded-lg p-3 shadow-sm max-w-xs mr-3">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                    <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
+                        👤
+                    </div>
+                `;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
-        }
 
-        // Chat
-        function toggleChat() { document.getElementById('chatPanel').classList.toggle('show'); }
-        
-        function handleEnter(e) {
-            if(e.key === 'Enter') sendMessage();
-        }
+            // Add robot message
+            function addRobotMessage(message) {
+                const messagesContainer = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex items-start mb-3 message-fade-in';
+                messageDiv.innerHTML = `
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-3 flex-shrink-0">
+                        🤖
+                    </div>
+                    <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                        <p class="text-sm text-gray-800">${message}</p>
+                    </div>
+                `;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
 
-        function sendMessage() {
-            let input = document.getElementById('chatInput');
-            let msg = input.value.trim();
-            if(!msg) return;
-
-            addMsg(msg, true);
-            input.value = '';
-
-            // Resposta automática simples para demonstração
-            setTimeout(() => {
-                let response = "Interessante! Lembre-se de usar o Canva para visualizar isso. Tente buscar por termos relacionados em 'Elementos'.";
+            // Get robot response
+            function getRobotResponse(message) {
+                const lowerMessage = message.toLowerCase();
                 
-                if(msg.toLowerCase().includes('cor')) response = "🎨 Para saúde, tons de azul e verde passam confiança. Evite vermelho excessivo.";
-                if(msg.toLowerCase().includes('fonte')) response = "✍️ Use fontes sem serifa como 'Open Sans' ou 'Roboto' para facilitar a leitura no digital.";
-                if(msg.toLowerCase().includes('imagem')) response = "🖼️ Busque por ilustrações simples (flat design) para não poluir o visual.";
+                for (const [key, response] of Object.entries(robotResponses)) {
+                    if (key !== 'default' && lowerMessage.includes(key)) {
+                        return response;
+                    }
+                }
                 
-                addMsg(response, false);
-            }, 800);
+                // Return random default response
+                const defaultResponses = robotResponses.default;
+                return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            }
+        });
+
+        // Scroll reveal animation
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.scroll-reveal');
+            
+            reveals.forEach(reveal => {
+                const windowHeight = window.innerHeight;
+                const elementTop = reveal.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('revealed');
+                }
+            });
         }
 
-        function addMsg(text, isUser) {
-            let div = document.createElement('div');
-            div.className = isUser ? "bg-blue-100 p-2 rounded-lg self-end ml-8 text-blue-900" : "bg-white p-2 rounded-lg shadow-sm mr-8 border text-gray-700";
-            div.innerText = text;
-            let container = document.getElementById('chatMessages');
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+        // Smooth scroll to modules
+        function scrollToModules() {
+            document.getElementById('modules').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
+
+        // Initialize animations
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Add parallax effect to hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero-bg');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Add dynamic particle generation
+        function createParticle() {
+            const containers = document.querySelectorAll('.floating-particles');
+            containers.forEach(container => {
+                if (Math.random() > 0.7) { // 30% chance
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.width = (Math.random() * 4 + 2) + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.animationDelay = '0s';
+                    container.appendChild(particle);
+                    
+                    // Remove particle after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 8000);
+                }
+            });
+        }
+
+        // Generate particles periodically
+        setInterval(createParticle, 2000);
+
+        // Add hover effects to cards
+        document.querySelectorAll('.card-3d').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Initial reveal for elements in viewport
+        setTimeout(revealOnScroll, 100);
     </script>
 </body>
 </html>
