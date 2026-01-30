@@ -3,421 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo 2: Otimização e Produção de Conteúdo com IA e Canva</title>
+    <title>Módulo 2: Otimização e Produção de Conteúdo</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: transparent;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
         }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255, 0, 150, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 255, 150, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 150, 0, 0.3) 0%, transparent 50%);
-            animation: gentleFloat 20s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes gentleFloat {
-            0%, 100% { 
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.3;
-            }
-            33% { 
-                transform: translateY(-10px) rotate(1deg);
-                opacity: 0.4;
-            }
-            66% { 
-                transform: translateY(5px) rotate(-1deg);
-                opacity: 0.2;
-            }
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: transparent;
-            border-radius: 25px;
-            box-shadow: none;
-            backdrop-filter: none;
-            border: none;
-            overflow: hidden;
-            position: relative;
-        }
-
+        .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.9); border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
         .header {
-            background: linear-gradient(135deg, #ff0080 0%, #ff8000 50%, #8000ff 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 20px 20px 0 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 40px; text-align: center;
         }
-
-        .header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .content {
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 0 0 20px 20px;
-        }
-
-        .intro-section {
-            background: rgba(255, 0, 150, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border-left: 5px solid #ff0096;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 25px rgba(255, 0, 150, 0.3);
-        }
-
-        .intro-section h2 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .intro-section p {
-            color: #4a5568;
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .highlight {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            margin: 20px 0;
-        }
-
-        .etapa {
-            background: transparent;
-            border: none;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            overflow: visible;
-            transition: all 0.3s ease;
-        }
-
+        .header h1 { margin-bottom: 10px; font-size: 2.5em; }
+        .content { padding: 40px; }
+        
+        /* Estilos das Etapas */
+        .etapa { margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 15px; overflow: hidden; transition: all 0.3s ease; }
+        .etapa:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
         .etapa-header {
-            padding: 20px 25px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            color: white;
+            padding: 20px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            background: white; font-weight: bold; color: #4a5568;
         }
+        .etapa-header:hover { background: #f8fafc; }
+        
+        .etapa-content { display: none; padding: 25px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        .etapa-content.active { display: block; animation: slideDown 0.3s ease; }
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .etapa-header:hover {
-            transform: translateY(-3px) scale(1.02);
+        /* Timer */
+        .timer-box {
+            background: #2d3748; color: white; padding: 15px 30px; border-radius: 50px;
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        /* Cores específicas para cada etapa */
-        #etapa1 .etapa-header { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); }
-        #etapa2 .etapa-header { background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); }
-        #etapa3 .etapa-header { background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); }
-        #etapa4 .etapa-header { background: linear-gradient(135deg, #ff9800 0%, #e65100 100%); }
-        #etapa5 .etapa-header { background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); }
-
-        .etapa-content {
-            padding: 25px;
-            display: none;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            margin-top: 10px;
+        .timer-display { font-family: monospace; font-size: 1.5em; font-weight: bold; }
+        
+        /* Botões */
+        .btn {
+            background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; font-weight: bold; transition: background 0.2s;
         }
-
-        .etapa-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .etapa-content ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .etapa-content li {
-            margin-bottom: 12px;
-            padding-left: 25px;
-            position: relative;
-            color: #4a5568;
-            line-height: 1.5;
-        }
-
-        .etapa-content li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #48bb78;
-            font-weight: bold;
-        }
-
-        .tema-buttons {
-            display: flex;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .tema-btn {
-            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            flex: 1;
-        }
-
-        .tema-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .tema-btn.selected {
-            background: linear-gradient(145deg, #48bb78 0%, #38a169 100%);
-            border: 2px solid #2f855a;
-        }
-
-        .timer-section {
-            background: linear-gradient(135deg, #ff0080 0%, #8000ff 100%);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .timer-time {
-            font-size: 2.5em;
-            font-weight: bold;
-            font-family: monospace;
-        }
-
-        .timer-btn {
-            background: white;
-            color: #8000ff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .timer-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .progress-bar {
-            background: rgba(255,255,255,0.5);
-            height: 10px;
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .checklist {
-            background: #f0fff4;
-            border: 1px solid #c6f6d5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .checkbox-item input {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-        }
-
-        @media (max-width: 768px) {
-            .container { margin: 10px; }
-            .header h1 { font-size: 1.8em; }
-            .timer-section { flex-direction: column; text-align: center; gap: 15px; }
-        }
+        .btn:hover { background: #5a67d8; }
+        
+        /* Barra de Progresso */
+        .progress-container { background: #e2e8f0; height: 10px; border-radius: 5px; margin: 20px 0; overflow: hidden; }
+        .progress-bar { background: #48bb78; height: 100%; width: 0%; transition: width 0.3s ease; }
+        
+        /* Checklist */
+        .checklist-item { display: flex; align-items: center; margin: 10px 0; }
+        .checklist-item input { margin-right: 10px; transform: scale(1.2); cursor: pointer; }
     </style>
 </head>
 <body>
-    
+
     <div class="container">
         <div class="header">
-            <h1>📚 Módulo 2: Otimização e Produção de Conteúdo</h1>
-            <p>IA e Canva trabalhando juntos para criar conteúdo incrível</p>
+            <h1>Módulo 2</h1>
+            <p>Otimização e Produção de Conteúdo com IA</p>
         </div>
 
         <div class="content">
-            <div class="intro-section">
-                <h2>🤝 A Força do Trabalho em Dupla</h2>
-                <p>Nesta semana, trabalharemos em grupos reduzidos de <strong>2 a 3 pessoas</strong>. O foco é a produção prática e criativa.</p>
-                <div class="highlight">
-                    <strong>⚠️ Importante:</strong> Foquem na qualidade visual e na clareza da informação.
+            <div class="timer-box">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>⏱️ Tempo de Aula:</span>
+                    <span id="timer" class="timer-display">50:00</span>
                 </div>
+                <button class="btn" onclick="toggleTimer()" id="timerBtn">Iniciar</button>
             </div>
 
-            <div class="timer-section">
-                <div>
-                    <div style="font-size: 0.9em; opacity: 0.8;">Tempo da Atividade</div>
-                    <div class="timer-time" id="timerDisplay">50:00</div>
-                </div>
-                <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">▶️ Iniciar</button>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
             </div>
 
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar"></div>
-            </div>
-
-            <div class="etapa" id="etapa1">
-                <div class="etapa-header" onclick="toggleEtapa(1)">
-                    <h3>📝 Etapa 1: Escolha do Tema</h3>
+            <div class="etapa">
+                <div class="etapa-header" onclick="toggleStep(1)">
+                    1. Escolha do Tema 📝
                     <span>▼</span>
                 </div>
-                <div class="etapa-content" id="content1">
-                    <p>Escolham um dos temas abaixo para desenvolver o post do grupo:</p>
-                    <div class="tema-buttons">
-                        <button class="tema-btn" onclick="selectTema(this)">🧠 TDAH</button>
-                        <button class="tema-btn" onclick="selectTema(this)">💭 Narcisismo</button>
+                <div id="step1" class="etapa-content">
+                    <p>Reúna-se com sua dupla e escolha um tema:</p>
+                    <div style="display: flex; gap: 10px; margin: 15px 0;">
+                        <button class="btn" onclick="selectTheme(this)">🧠 TDAH</button>
+                        <button class="btn" onclick="selectTheme(this)">💭 Narcisismo</button>
                     </div>
-                    <div class="checklist">
-                        <h4>Checklist:</h4>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="check1" onchange="updateProgress()">
-                            <label for="check1">Tema definido pelo grupo</label>
-                        </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateProgress()"> Tema definido
                     </div>
                 </div>
             </div>
 
-            <div class="etapa" id="etapa2">
-                <div class="etapa-header" onclick="toggleEtapa(2)">
-                    <h3>🤖 Etapa 2: Consulta à IA</h3>
+            <div class="etapa">
+                <div class="etapa-header" onclick="toggleStep(2)">
+                    2. Pesquisa com IA 🤖
                     <span>▼</span>
                 </div>
-                <div class="etapa-content" id="content2">
-                    <p>Usem a Assistente de IA para pesquisar sobre o tema escolhido.</p>
-                    <div class="highlight">
-                        <strong>Dica de Prompt:</strong> "Explique o [TEMA] de forma simples para um post de Instagram, focando em sintomas e curiosidades."
+                <div id="step2" class="etapa-content">
+                    <p>Use a Assistente Virtual para pesquisar:</p>
+                    <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>Prompt sugerido:</strong> "Explique o [TEMA] para um público leigo no Instagram, focando em 3 sintomas principais."
                     </div>
-                    <button class="tema-btn" onclick="window.open('https://chatbot-simples-1.onrender.com/', '_blank')">🤖 Abrir Assistente</button>
-                    <div class="checklist">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="check2" onchange="updateProgress()">
-                            <label for="check2">Informações coletadas com a IA</label>
-                        </div>
+                    <button class="btn" onclick="window.open('https://chatbot-simples-1.onrender.com/', '_blank')">Abrir Assistente</button>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateProgress()"> Pesquisa realizada
                     </div>
                 </div>
             </div>
 
-            <div class="etapa" id="etapa3">
-                <div class="etapa-header" onclick="toggleEtapa(3)">
-                    <h3>✍️ Etapa 3: Criação de Textos</h3>
+            <div class="etapa">
+                <div class="etapa-header" onclick="toggleStep(3)">
+                    3. Criação no Canva 🎨
                     <span>▼</span>
                 </div>
-                <div class="etapa-content" id="content3">
-                    <p>Peça para a IA gerar:</p>
+                <div id="step3" class="etapa-content">
+                    <p>Abra o Canva e crie um "Post para Instagram".</p>
                     <ul>
-                        <li>Um título chamativo</li>
-                        <li>Uma legenda engajadora</li>
-                        <li>Hashtags relevantes</li>
+                        <li>Use pouco texto</li>
+                        <li>Escolha cores contrastantes</li>
+                        <li>Adicione imagens ilustrativas</li>
                     </ul>
-                    <div class="checklist">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="check3" onchange="updateProgress()">
-                            <label for="check3">Textos definidos</label>
-                        </div>
+                    <button class="btn" onclick="window.open('https://www.canva.com', '_blank')" style="margin-top: 10px;">Ir para o Canva</button>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateProgress()"> Design finalizado
                     </div>
                 </div>
             </div>
 
-            <div class="etapa" id="etapa4">
-                <div class="etapa-header" onclick="toggleEtapa(4)">
-                    <h3>✨ Etapa 4: Design no Canva</h3>
+            <div class="etapa">
+                <div class="etapa-header" onclick="toggleStep(4)">
+                    4. Finalização ✅
                     <span>▼</span>
                 </div>
-                <div class="etapa-content" id="content4">
-                    <p>Abra o Canva e crie um "Post para Instagram". Use as informações coletadas para montar a arte.</p>
-                    <button class="tema-btn" onclick="window.open('https://www.canva.com', '_blank')" style="background: linear-gradient(145deg, #00c4cc, #00838f);">🎨 Abrir Canva</button>
-                    <div class="checklist">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="check4" onchange="updateProgress()">
-                            <label for="check4">Arte finalizada no Canva</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="etapa" id="etapa5">
-                <div class="etapa-header" onclick="toggleEtapa(5)">
-                    <h3>🎨 Etapa 5: Finalização</h3>
-                    <span>▼</span>
-                </div>
-                <div class="etapa-content" id="content5">
-                    <p>Revise o conteúdo, verifique a ortografia e salve a imagem final.</p>
-                    <div class="highlight">
-                        <strong>Parabéns!</strong> Vocês concluíram a atividade prática.
-                    </div>
-                    <div class="checklist">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="check5" onchange="updateProgress()">
-                            <label for="check5">Atividade concluída</label>
-                        </div>
+                <div id="step4" class="etapa-content">
+                    <p>Salve a imagem do seu post (formato PNG) no seu computador.</p>
+                    <div class="checklist-item">
+                        <input type="checkbox" onchange="updateProgress()"> Arquivo salvo
                     </div>
                 </div>
             </div>
@@ -426,77 +150,64 @@
     </div>
 
     <script>
+        // Timer
+        let time = 50 * 60;
         let timerInterval;
-        let timeLeft = 50 * 60;
-        let isTimerRunning = false;
-
-        function toggleEtapa(num) {
-            const content = document.getElementById(`content${num}`);
-            if (content.classList.contains('active')) {
-                content.classList.remove('active');
-            } else {
-                // Fecha outros
-                document.querySelectorAll('.etapa-content').forEach(el => el.classList.remove('active'));
-                content.classList.add('active');
-            }
-        }
+        let isRunning = false;
 
         function toggleTimer() {
             const btn = document.getElementById('timerBtn');
-            if (isTimerRunning) {
+            if (isRunning) {
                 clearInterval(timerInterval);
-                btn.innerText = "▶️ Continuar";
-                isTimerRunning = false;
+                btn.innerText = "Continuar";
             } else {
                 timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateTimerDisplay();
+                    if (time > 0) {
+                        time--;
+                        let m = Math.floor(time / 60).toString().padStart(2, '0');
+                        let s = (time % 60).toString().padStart(2, '0');
+                        document.getElementById('timer').innerText = `${m}:${s}`;
                     } else {
                         clearInterval(timerInterval);
                         alert("Tempo esgotado!");
                     }
                 }, 1000);
-                btn.innerText = "⏸️ Pausar";
-                isTimerRunning = true;
+                btn.innerText = "Pausar";
             }
+            isRunning = !isRunning;
         }
 
-        function updateTimerDisplay() {
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+        // Accordion
+        function toggleStep(id) {
+            const content = document.getElementById('step' + id);
+            // Fecha todos
+            document.querySelectorAll('.etapa-content').forEach(el => el.classList.remove('active'));
+            // Abre o atual
+            content.classList.add('active');
         }
 
-        function selectTema(btn) {
-            document.querySelectorAll('.tema-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            document.getElementById('check1').checked = true;
-            updateProgress();
-        }
-
+        // Progresso
         function updateProgress() {
-            const total = 5;
+            const total = 4;
             const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
             const pct = (checked / total) * 100;
-            document.getElementById('progressBar').style.width = `${pct}%`;
+            document.getElementById('progressBar').style.width = pct + '%';
             
-            // Auto-abrir próxima etapa
             if (checked < total) {
-                const next = checked + 1;
-                // Pequeno delay para efeito visual
-                if (document.getElementById(`check${checked}`).checked) {
-                     setTimeout(() => {
-                        if (!document.getElementById(`content${next}`).classList.contains('active')) {
-                            toggleEtapa(next);
-                        }
-                     }, 500);
-                }
+                toggleStep(checked + 1);
+            } else if (checked === total) {
+                alert("🎉 Parabéns! Módulo concluído!");
             }
         }
 
-        // Iniciar com a etapa 1 aberta
-        toggleEtapa(1);
+        function selectTheme(btn) {
+            btn.style.background = '#48bb78';
+            btn.innerText += ' ✅';
+        }
+
+        // Inicia com o passo 1 aberto
+        toggleStep(1);
     </script>
+
 </body>
 </html>
